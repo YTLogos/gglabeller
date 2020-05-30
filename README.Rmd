@@ -16,7 +16,9 @@ set.seed(20)
 
 # gglabeller
 
-R package with one main function, gglabeller, which launches a simple shiny gadget that enables selecting points on a ggplot to label. Label positions are determined using the fantastic [ggrepel](www.github.com/slowkow/ggrepel) package.
+R package with one main function, gglabeller, which launches a simple shiny gadget that enables selecting points on a ggplot to label. Label positions are determined using the fantastic [ggrepel](https://github.com/slowkow/ggrepel) package.
+
+Note: gglabeller has been recently updated to be compatible with ggplot2 version 3.0 -- if encountering issues with previous versions of gglabeller after updating ggplot2, please try updating gglabeller to version 0.3.0 or higher! (and gglabeller  0.3.0+ now requires ggplot2 >= 3.0)
 
 # Installation
 
@@ -76,7 +78,7 @@ library(magrittr)
 gglabeller_example$code %>% parse(text = .) %>% eval()
 ```
 
-You can also just get out the indices of the lbelled points:
+You can also just get out the indices of the labelled points:
 
 
 ```{r}
@@ -89,7 +91,18 @@ This can be used to get out the labels themselves.
 rownames(mtcars)[gglabeller_example$ix]
 ```
 
+## Text and label properties
+
+Parameters to ggrepel, including additional text and label properties (the `...` arguments to `geom_text_repel` or `geom_label_repel`), can also be passed in to `gglabeller`.
+
+For example, the following will result in bold red font for the labels in the app:
+
+```{r, eval = FALSE}
+gglabeller(p, aes(label = rownames(mtcars)),  fontface = "bold", color = "red")
+```
+
 # Limitations
 
 Requires points to label; not targetted at line plots or other non-point plots.
 
+Relies on shiny's nearPoints and brushedPoints functions, which require that the 'x' and 'y' aesthetics be mapped to a column name and not a transformation. For example, `ggplot(mtcars, aes(x = log(wt), y = mpg))` will not work because the x aesthetic is mapped to a transformation of the column. For such a plot, one could modify the input first to create a column with the log of the value. 
